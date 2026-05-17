@@ -8,7 +8,7 @@ from adapters.context import ForwardContext
 from transformers import PreTrainedModel
 from transformers.models.auto.auto_factory import getattribute_from_module
 from transformers.models.auto.configuration_auto import model_type_to_module_name
-from transformers.utils.generic import _CAN_RECORD_REGISTRY
+from transformers.utils.output_capturing import _CAN_RECORD_REGISTRY
 
 from ..configuration import ModelAdaptersConfig
 from ..interface import AdapterModelInterface
@@ -65,9 +65,9 @@ def replace_with_adapter_class(module: nn.Module, modules_with_adapters) -> None
         )
         module.__class__ = model_class
         _reregister_can_record_outputs(module)
-    elif module.__class__.__module__.startswith("transformers.models") or module.__class__.__module__.startswith(
-        "adapters.wrappers.model"
-    ):
+    elif module.__class__.__module__.startswith(
+        "transformers.models"
+    ) or module.__class__.__module__.startswith("adapters.wrappers.model"):
         try:
             module_class = getattribute_from_module(
                 modules_with_adapters,
@@ -112,11 +112,15 @@ def init(
         base_model.__class__ = model_class
         _reregister_can_record_outputs(base_model)
         base_model.adapter_interface = interface
-        base_model.support_prompt_tuning = False  # HACK: will be set to true if init_prompt_tuning() is called
+        base_model.support_prompt_tuning = (
+            False  # HACK: will be set to true if init_prompt_tuning() is called
+        )
     else:
         # First, replace original module classes with their adapters counterparts
         try:
-            modules_with_adapters = importlib.import_module(f".{model_name}.modeling_{model_name}", "adapters.models")
+            modules_with_adapters = importlib.import_module(
+                f".{model_name}.modeling_{model_name}", "adapters.models"
+            )
         except ImportError:
             raise ValueError(
                 f"Model {model_name} not pre-supported by adapters. Please specify and pass `interface` explicitly."
@@ -141,11 +145,15 @@ def init(
 
     # Next, check if model class itself is not replaced and has an adapter-supporting base class
     if not isinstance(model, ModelAdaptersMixin):
-        if hasattr(model, "base_model_prefix") and hasattr(model, model.base_model_prefix):
+        if hasattr(model, "base_model_prefix") and hasattr(
+            model, model.base_model_prefix
+        ):
             base_model = getattr(model, model.base_model_prefix)
             if isinstance(base_model, ModelAdaptersMixin):
                 # HACK to preserve original forward method signature (e.g. for Trainer label names)
-                temp_signature = ForwardContext.add_context_args_in_signature(model.forward.__func__)
+                temp_signature = ForwardContext.add_context_args_in_signature(
+                    model.forward.__func__
+                )
                 # Create new wrapper model class
                 model_class_name = model.__class__.__name__
                 model_class = type(
@@ -213,7 +221,9 @@ def load_model(
     return model
 
 
-def _validate_interface_values(base_model: PreTrainedModel, interface: AdapterModelInterface) -> None:
+def _validate_interface_values(
+    base_model: PreTrainedModel, interface: AdapterModelInterface
+) -> None:
     """
     Validates that all values specified in the interface exist in the model.
 
@@ -263,7 +273,9 @@ def _validate_interface_values(base_model: PreTrainedModel, interface: AdapterMo
         "layer_ln_2",
     ]
     values_to_check = {
-        name: getattr(interface, name) for name in layer_attributes if getattr(interface, name) is not None
+        name: getattr(interface, name)
+        for name in layer_attributes
+        if getattr(interface, name) is not None
     }
 
     for layer_name, layer_value in values_to_check.items():
