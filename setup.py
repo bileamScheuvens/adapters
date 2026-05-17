@@ -61,7 +61,7 @@ _deps = [
     "timeout-decorator",
     "torch",
     "torchvision",
-    "transformers~=4.57.6",
+    "transformers>=5.2.0",
 ]
 
 
@@ -73,9 +73,7 @@ _deps = [
 # some of the values are versioned whereas others aren't.
 deps = {
     b: a
-    for a, b in (
-        re.findall(r"^(([^!=<>~ ]+)(?:[!=<>~ ].*)?$)", x)[0] for x in _deps
-    )
+    for a, b in (re.findall(r"^(([^!=<>~ ]+)(?:[!=<>~ ].*)?$)", x)[0] for x in _deps)
 }
 
 
@@ -114,9 +112,7 @@ extras["testing"] = deps_list(
     "torchvision",
 )
 
-extras["quality"] = deps_list(
-    "black", "datasets", "isort", "flake8", "GitPython"
-)
+extras["quality"] = deps_list("black", "datasets", "isort", "flake8", "GitPython")
 
 extras["docs"] = deps_list(
     "docutils",

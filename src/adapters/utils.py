@@ -25,7 +25,7 @@ import torch
 
 import requests
 from filelock import FileLock
-from huggingface_hub import HfApi, HfFolder, snapshot_download
+from huggingface_hub import HfApi, snapshot_download, get_token
 from huggingface_hub.file_download import http_get
 from huggingface_hub.utils import (
     EntryNotFoundError,
@@ -34,7 +34,9 @@ from huggingface_hub.utils import (
     hf_raise_for_status,
 )
 from requests.exceptions import HTTPError
-from transformers.utils import http_user_agent, is_remote_url
+from transformers.utils import http_user_agent
+def is_remote_url(url):
+    return url.startswith("http")
 
 from . import __version__
 from .context import ForwardContext
@@ -271,7 +273,7 @@ def get_from_cache(
     if isinstance(use_auth_token, str):
         headers["authorization"] = f"Bearer {use_auth_token}"
     elif use_auth_token:
-        token = HfFolder.get_token()
+        token = get_token()
         if token is None:
             raise EnvironmentError("You specified use_auth_token=True, but a huggingface token was not found.")
         headers["authorization"] = f"Bearer {token}"
