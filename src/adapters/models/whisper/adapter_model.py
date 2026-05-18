@@ -23,7 +23,7 @@ from ...wrappers import init
 class WhisperAdapterModel(
     EmbeddingAdaptersWrapperMixin, ModelWithFlexibleHeadsAdaptersMixin, WhisperPreTrainedModel, GenerationMixin
 ):
-    _tied_weights_keys = []
+    _tied_weights_keys = {}
     head_types = ["seq2seq_lm"]
 
     def __init__(self, config: WhisperConfig, **kwargs):

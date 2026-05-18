@@ -436,9 +436,10 @@ class ModelAdaptersMixin(PushAdapterToHubMixin, ABC):
     def _add_tied_weights_keys(self):
         """Internal method to add adapter-specific keys to the list of tied weights keys."""
         if self.base_model.support_prompt_tuning:
-            prompt_tied_weights_keys = ["prompt_tuning.base_model_embeddings.*"]
+            # prompt_tied_weights_keys = {"prompt_tuning.base_model_embeddings.weight": "embeddings.word_embeddings.weight"}
+            prompt_tied_weights_keys = {}
             if self._tied_weights_keys is not None:
-                self._tied_weights_keys += prompt_tied_weights_keys
+                self._tied_weights_keys.update(prompt_tied_weights_keys)
             else:
                 self._tied_weights_keys = prompt_tied_weights_keys
 
@@ -717,13 +718,13 @@ class ModelAdaptersMixin(PushAdapterToHubMixin, ABC):
         if self.adapters_config.match(adapter_name, LoRAConfig):
             adapter_config = self.adapters_config.match(adapter_name, LoRAConfig)
             if isinstance(adapter_config.vera_d, float) or isinstance(adapter_config.vera_b, float):
-                vera_tied_weights_keys = [
-                    f"shared_parameters\\.{adapter_name}\\.lora_A",
-                    f"shared_parameters\\.{adapter_name}\\.lora_B",
-                ]
+                vera_tied_weights_keys = {
+                        f"shared_parameters\\.{adapter_name}\\.lora_A": f"shared_parameters\\.{adapter_name}\\.lora_A",
+                        f"shared_parameters\\.{adapter_name}\\.lora_B": f"shared_parameters\\.{adapter_name}\\.lora_B",
+                }
 
                 if self._tied_weights_keys is not None:
-                    self._tied_weights_keys += vera_tied_weights_keys
+                    self._tied_weights_keys.update(vera_tied_weights_keys)
                 else:
                     self._tied_weights_keys = vera_tied_weights_keys
 

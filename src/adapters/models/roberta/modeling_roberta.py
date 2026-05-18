@@ -25,7 +25,6 @@ from torch import nn
 from transformers.cache_utils import Cache, EncoderDecoderCache
 from transformers.models.roberta.modeling_roberta import (
     RobertaOutput,
-    RobertaSdpaSelfAttention,
     RobertaSelfAttention,
     RobertaSelfOutput,
 )
@@ -157,7 +156,7 @@ class RobertaSelfAttentionWithAdapters(BertSelfAttentionAdaptersMixin, RobertaSe
         return context_layer, attention_probs
 
 
-class RobertaSdpaSelfAttentionWithAdapters(BertSelfAttentionAdaptersMixin, RobertaSdpaSelfAttention):
+class RobertaSdpaSelfAttentionWithAdapters(BertSelfAttentionAdaptersMixin):
     def forward(
         self,
         hidden_states: torch.Tensor,

@@ -20,7 +20,7 @@ from typing import Optional, Tuple, Union
 import torch
 from torch import nn
 
-from transformers.models.albert.modeling_albert import AlbertAttention, AlbertLayer, AlbertSdpaAttention
+from transformers.models.albert.modeling_albert import AlbertAttention, AlbertLayer
 from transformers.pytorch_utils import apply_chunking_to_forward
 from transformers.utils import logging
 
@@ -113,7 +113,7 @@ class AlbertAttentionWithAdapters(AlbertAttentionAdaptersMixin, AlbertAttention)
         return (layernormed_context_layer, attention_probs) if output_attentions else (layernormed_context_layer,)
 
 
-class AlbertSdpaAttentionWithAdapters(AlbertAttentionAdaptersMixin, AlbertSdpaAttention):
+class AlbertSdpaAttentionWithAdapters(AlbertAttentionAdaptersMixin):
     def forward(
         self,
         hidden_states: torch.Tensor,

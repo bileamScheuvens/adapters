@@ -24,7 +24,7 @@ import torch.utils.checkpoint
 from torch import nn
 
 from transformers.cache_utils import Cache, EncoderDecoderCache
-from transformers.models.bert.modeling_bert import BertOutput, BertSdpaSelfAttention, BertSelfAttention, BertSelfOutput
+from transformers.models.bert.modeling_bert import BertOutput, BertSelfAttention, BertSelfOutput
 from transformers.utils import logging
 
 from ...composition import adjust_tensors_for_parallel, match_attn_matrices_for_parallel
@@ -45,6 +45,7 @@ class BertSelfAttentionWithAdapters(BertSelfAttentionAdaptersMixin, BertSelfAtte
         past_key_values: Optional[Cache] = None,
         output_attentions: Optional[bool] = False,
         cache_position: Optional[torch.Tensor] = None,
+        **kwargs,
     ) -> Tuple[torch.Tensor]:
         attention_mask = prefix_attention_mask(attention_mask)  # type: ignore
 
@@ -152,7 +153,7 @@ class BertSelfAttentionWithAdapters(BertSelfAttentionAdaptersMixin, BertSelfAtte
         return context_layer, attention_probs
 
 
-class BertSdpaSelfAttentionWithAdapters(BertSelfAttentionAdaptersMixin, BertSdpaSelfAttention):
+class BertSdpaSelfAttentionWithAdapters(BertSelfAttentionAdaptersMixin):
     def forward(
         self,
         hidden_states: torch.Tensor,

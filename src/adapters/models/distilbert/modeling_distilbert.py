@@ -26,9 +26,6 @@ import torch
 from torch import nn
 
 from transformers.models.distilbert.modeling_distilbert import (
-    DistilBertFlashAttention2,
-    DistilBertSdpaAttention,
-    MultiHeadSelfAttention,
     TransformerBlock,
 )
 from transformers.utils import is_flash_attn_2_available, logging
@@ -45,7 +42,7 @@ if is_flash_attn_2_available():
 logger = logging.get_logger(__name__)
 
 
-class MultiHeadSelfAttentionWithAdapters(DistilBertMultiHeadSelfAttentionMixin, MultiHeadSelfAttention):
+class MultiHeadSelfAttentionWithAdapters(DistilBertMultiHeadSelfAttentionMixin):
     def forward(
         self,
         query: torch.Tensor,
@@ -120,7 +117,7 @@ class MultiHeadSelfAttentionWithAdapters(DistilBertMultiHeadSelfAttentionMixin, 
             return (context,)
 
 
-class DistilBertSdpaAttentionWithAdapters(DistilBertMultiHeadSelfAttentionMixin, DistilBertSdpaAttention):
+class DistilBertSdpaAttentionWithAdapters(DistilBertMultiHeadSelfAttentionMixin):
     def forward(
         self,
         query: torch.Tensor,

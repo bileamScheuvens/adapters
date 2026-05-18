@@ -38,7 +38,8 @@ class BertAdapterModel(
 
         self._init_head_modules()
 
-        self.init_weights()
+        # self.init_weights()
+        self.post_init()
 
     @inherit_doc_for_function(BertModel.forward)
     @ForwardContext.wrap

@@ -23,10 +23,10 @@ logger = logging.getLogger(__name__)
 class MT5AdapterModel(
     EmbeddingAdaptersWrapperMixin, ModelWithFlexibleHeadsAdaptersMixin, MT5PreTrainedModel, GenerationMixin
 ):
-    _tied_weights_keys = [
-        "encoder.embed_tokens.weight",
-        "decoder.embed_tokens.weight",
-    ]
+    _tied_weights_keys = {
+        "encoder.embed_tokens.weight": "encoder.embed_tokens.weight",
+        "decoder.embed_tokens.weight": "decoder.embed_tokens.weight",
+    }
 
     _keys_to_ignore_on_load_unexpected = [
         r"decoder.block.0.layer.1.EncDecAttention.relative_attention_bias.weight",

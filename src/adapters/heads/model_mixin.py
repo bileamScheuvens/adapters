@@ -164,7 +164,7 @@ class ModelWithFlexibleHeadsAdaptersMixin(ModelWithHeadsAdaptersMixin):
                 head = self.heads[head_name]
                 head.set_output_embeddings(emb)
 
-    def tie_weights(self):
+    def tie_weights(self, **kwargs):
         """
         Tie the weights between the input embeddings and the output embeddings.
 
@@ -181,7 +181,7 @@ class ModelWithFlexibleHeadsAdaptersMixin(ModelWithHeadsAdaptersMixin):
                 self = getattr(self, self.base_model_prefix)
             self._tie_encoder_decoder_weights(self.encoder, self.decoder, self.base_model_prefix)
 
-        super().tie_weights()
+        super().tie_weights(**kwargs)
 
     def _resize_token_embeddings(self, new_num_tokens, pad_to_multiple_of=None, mean_resizing=True):
         super()._resize_token_embeddings(new_num_tokens, pad_to_multiple_of, mean_resizing)
