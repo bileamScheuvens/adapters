@@ -36,6 +36,14 @@ logger = logging.get_logger(__name__)
 
 
 class BertSelfAttentionWithAdapters(BertSelfAttentionAdaptersMixin, BertSelfAttention):
+
+    def __init__(self, config, **kwargs):
+        super().__init__(config, **kwargs)
+
+    @property
+    def position_embedding_type(self):
+        return getattr(self.config, "position_embedding_type", "absolute")
+    
     def forward(
         self,
         hidden_states: torch.Tensor,

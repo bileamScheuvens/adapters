@@ -436,8 +436,10 @@ class ModelAdaptersMixin(PushAdapterToHubMixin, ABC):
     def _add_tied_weights_keys(self):
         """Internal method to add adapter-specific keys to the list of tied weights keys."""
         if self.base_model.support_prompt_tuning:
-            # prompt_tied_weights_keys = {"prompt_tuning.base_model_embeddings.weight": "embeddings.word_embeddings.weight"}
-            prompt_tied_weights_keys = {}
+            prompt_tied_weights_keys = {name: name.replace("prompt_tuning.base_model_embeddings", "embeddings.word_embeddings")
+                for name, _ in self.named_parameters()
+                if "prompt_tuning.base_model_embeddings" in name
+            }
             if self._tied_weights_keys is not None:
                 self._tied_weights_keys.update(prompt_tied_weights_keys)
             else:
